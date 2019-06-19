@@ -1,0 +1,9 @@
+BasedOnStyle: Google
+Language: Cpp
+IndentWidth: 4
+AllowShortFunctionsOnASingleLine: true
+AlignEscapedNewlinesLeft: true
+AlignTrailingComments: true
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortFunctionsOnASingleLine: true
+ColumnLimit: 0

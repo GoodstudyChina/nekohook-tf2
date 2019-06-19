@@ -1,0 +1,6 @@
+[submodule "nekohook"]
+	path = external/nekohook
+	url = https://github.com/oneechanhax/nekohook
+[submodule "external/nekohack"]
+	path = external/nekohack
+	url = https://github.com/oneechanhax/nekohack
