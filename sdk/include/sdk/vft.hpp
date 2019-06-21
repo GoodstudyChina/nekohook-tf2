@@ -4,10 +4,9 @@
 namespace sourcesdk {
 
 template<typename Func, class This>
-Func GetVirtual(This* _this, std::ptrdiff_t offset) {
-    using VFT = void**;
-    VFT table = *reinterpret_cast<VFT*>(_this);
-    return reinterpret_cast<Func>(table + offset);
+Func GetVirtual(This* _this, int offset) {
+    void** table = *reinterpret_cast<void***>(_this);
+    return reinterpret_cast<Func>(table[offset]);
 }
 
 }

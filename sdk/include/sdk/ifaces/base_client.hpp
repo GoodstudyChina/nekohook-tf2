@@ -11,7 +11,7 @@ class BaseClient {
 public:
     ClientClass* GetAllClasses() {
         using Func = ClientClass* (*)();
-        return GetVirtual<Func>(this, sizeof(void*) * 8)();
+        return GetVirtual<Func>(this, 8)();
     }
 };
 

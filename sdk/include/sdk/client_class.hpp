@@ -31,6 +31,8 @@ public:
     void *g2, *g3, *g4, *g5, *g6;
     RecvTable* table;      // For RDT_DataTable.
     const int offset = 0;  // offset from an entity to the requested property
+    int g7, g8;
+    void* g9;
 };
 
 class RecvTable {
