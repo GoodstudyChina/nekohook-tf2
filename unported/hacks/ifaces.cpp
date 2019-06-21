@@ -34,22 +34,15 @@ IEngineTool* engine_tool = nullptr;  // wts
 ISurface* surface = nullptr;         // Used for surface drawing
 
 template <typename T>
-static T* BfInterface(const char* name, SourceSo& object, int start = 0) {
-    // Copy this now, we wont need to later
-    char iface_name[128];
-    strcpy(iface_name, name);
-
-    size_t len = strlen(name);
+static T* BfInterface(std::string_view name, SourceSo& object, int start = 0) {
+    char iface_name[64];
+    strncpy(iface_name, name, name.size());
     for (int i = start; i < 100; i++) {
-        // We can write directly to the end of the base
-        sprintf(&iface_name[len], "%03i", i);
-
-        // Try to get interface
+        sprintf(&iface_name[name.size()], "%03i", i);
         auto result = reinterpret_cast<T*>(object.CreateIFace(iface_name));
         if (result) return result;
     }
-    debug_log.Fmt("RIP Software: can't create interface %s!", name);
-    return nullptr;
+    throw std::runtime_error("can't create interface " + std::string(name));
 }
 
 void Init() {

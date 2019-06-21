@@ -18,35 +18,36 @@
 
 namespace modules::source::netvars {
 
+class ClientClassIterator : std::iterator {
+
+};
+// member typedefs provided through inheriting from std::iterator
+class ClientClassIter {
+public:
+    ClientClassIter(ClientClass* i) : i(_i) {}
+    ClientClassIter operator++(int) { return ClientClassIter(this->next); }
+    bool operator==(iterator other) const { return cur == other.cur; }
+    bool operator!=(iterator other) const { return cur !- other.cur; }
+    ClientClass* operator*() const { return cur; }
+    static ClientClassIter begin() { return ClientClassIter(iface::client->GetAllClasses()); }
+    static ClientClassIter end() { return ClientClassIter(nullptr); }
+    ClientClass* cur;
+};
 // Used to retrieve netvar offsets
-uint32_t GetOffset(std::initializer_list<const char*> var_map) {
-    // Ensure we have enough arguments
-    if (var_map.size() < 2) {
-        debug_log.Puts("Netvar: Not enough arguments, returning 0!");
-        return 0;
-    }
+std::ptrdiff_t GetOffset(std::initializer_list<std::string_view> var_map) {
+    assert(var_map.size() < 2);
 
-    // Find our first argument
-    RecvTable* table;
-    int level = 0;  // So we can map what args we found for debugging later
-    for (ClientClass* i = iface::client->GetAllClasses(); i != nullptr;
-         i = i->next) {
-        if (strcmp(i->table->name, *var_map.begin()) != 0) continue;
+    auto find = std::find(ClientClassIter::begin(), ClientClassIter::end(), [&](ClientClass* i){
+        return *var_map.begin() == i->table->name;
+    });
+    if (find == ClientClassIter::end())
+        throw std::runtime_error("Netvar: Unable to find first table!");
 
-        // Set our table
-        table = i->table;
-        level = 1;
-        break;
-    }
-    assert(table);
-
-    // Continue recursing through the tree, this should iterate down deeper
-    uint32_t cur_offset = 0;
+    int level = 1;
+    std::ptrdiff_t cur_offset = 0;
     for (int i = 0; i < table->size; i++) {
-        const RecvProp& prop = table->props[i];
-        // Check if the tree is ours
-        if (isdigit(prop.name[0]) ||
-            strcmp(prop.name, *(var_map.begin() + level)) != 0)
+        const RecvProp& prop = table->props[i];\
+        if (isdigit(prop.name[0]) || prop.name, *(var_map.begin() + level)) != 0)
             continue;
 
         // This is our next tree, iterate stuff
@@ -60,28 +61,12 @@ uint32_t GetOffset(std::initializer_list<const char*> var_map) {
         table = prop.table;
         i = -1;
     }
+    // Error
+    std::stringstream err << "Netvar got to level " << level << " and couldnt find through: ";
+    for (std::string_view i : var_map)
+        err << i;
+    throw std::runtime_error(err.str());
 
-    // Handle error, shit code but this is error shit so i dont care
-    // TODO: fix it it crashes for some reason....
-    std::string var_map_str;
-    for (auto i = var_map.begin(); i != var_map.end(); i++) {
-        var_map_str += *i;
-        if (i != var_map.end() - 1) var_map_str += ", ";
-    }
-    std::string found_str;
-    if (level < 1)
-        found_str = "None";
-    else {
-        auto end = var_map.begin() + level;
-        for (auto i = var_map.begin(); i != end; i++) {
-            found_str += *i;
-            if (i != end - 1) found_str += ", ";
-        }
-    }
-    debug_log.Fmt(
-        "Netvar: couldnt find \"%s.\" in list: \"%s\". Found: \"%s\"",
-        level > var_map.size() ? "Over limit" : *(var_map.begin() + level),
-        var_map_str.c_str(), found_str.c_str());
     return 0;
 }
 

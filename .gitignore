@@ -18,7 +18,4 @@ CMakeFiles/*
 CMakeCache.txt
 cmake_install.cmake
 Makefile
-
-# Binaries
-libnekolib.a
-libnekolib.so
+build/*

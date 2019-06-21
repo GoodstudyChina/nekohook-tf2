@@ -1,7 +1,7 @@
 
 #include "memory.hpp"
 
-namespace sourcesdk {
+namespace sourcesdk::utl {
 
 template <class T, class Allocator = Memory<T> >
 class Vector {

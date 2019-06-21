@@ -8,24 +8,23 @@
 
 #pragma once
 
-#include "../public/icliententity.h"
-
-enum PropType {
-    DPT_Int,
-    DPT_Float,
-    DPT_Vector,
-    DPT_VectorXY,  // Only encodes the XY of a vector, ignores Z
-    DPT_String,
-    DPT_Array,  // An array of the base types (can't be of datatables).
-    DPT_DataTable,
-    DPT_Int64
-};
+namespace sourcesdk {
 
 class RecvTable;
 class RecvProp {
-   public:
+public:
     const char* name;
-    const PropType type = DPT_Int;
+    enum Type {
+        kInt,
+        kFloat,
+        kVector,
+        kVectorXY,  // Only encodes the XY of a vector, ignores Z
+        kString,
+        kArray,  // An array of the base types (can't be of datatables).
+        kDataTable,
+        kInt64
+    };
+    const Type type = Type::kInt;
     const int flags = 0;
     const int str_size = 0;
     bool g1;
@@ -34,21 +33,21 @@ class RecvProp {
     const int offset = 0;  // offset from an entity to the requested property
 };
 
-class CRecvDecoder;
 class RecvTable {
    public:
     const RecvProp* props;
     const int size = 0;
-    const CRecvDecoder* decoder;
+    const void* decoder;
     const char* name;
 };
 
 class ClientClass {
     void *g1, *g2;
-
-   public:
+public:
     const char* name;
     RecvTable* table;
     ClientClass* next;
     int id;  // Managed by the engine.
 };
+
+}

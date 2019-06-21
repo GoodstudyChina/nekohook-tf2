@@ -1,5 +1,5 @@
 
-namespace sourcesdk {
+namespace sourcesdk::utl {
 
 using String = char*;
 
