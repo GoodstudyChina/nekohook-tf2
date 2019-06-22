@@ -1,8 +1,20 @@
 
 /*
+ * Nekohook: Free, fast and modular cheat software
+ * Copyright (C) 2018 Rebekah Rowe
  *
- * Sexy boiler plate
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #pragma once
@@ -11,7 +23,7 @@ namespace sourcesdk {
 
 enum CVarFlags {
     kNone = 0,
-    kUnregistered = 0)
+    kUnregistered = 0,
     kDeveloper = 1,
     kGamedll = 2,
     kClientdll = 3,
@@ -81,7 +93,7 @@ class Command : public CommandBase {
 
     virtual ~ConCommand() {}
     virtual int AutoCompleteSuggest(const char* partial,
-                                    utl::Vector<const char*>& commands);
+                                    utl::Vector<utl::String>& commands);
     virtual bool CanAutoComplete() { return false; }
     virtual void Dispatch(const CCommand& command);
 };

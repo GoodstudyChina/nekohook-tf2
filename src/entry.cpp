@@ -17,8 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
  
-namespace neko::dumper::clientclass {
+#include <sdk/netvar.hpp>
+#include "iface.hpp"
 
-void Dump();
+namespace neko::hook::entry {
+
+void __attribute__((constructor)) Init() {
+    iface::Init();
+    sourcesdk::Netvar::Init(iface::client);
+}
 
 }

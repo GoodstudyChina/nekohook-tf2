@@ -16,9 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
- 
-namespace neko::dumper::clientclass {
 
-void Dump();
+#pragma once
 
-}
+class IInput {
+public:
+    int IsThirdPerson() {
+        using Func = int(*)();
+        return GetVirtual<Func>(this, 31)();
+    }
+};

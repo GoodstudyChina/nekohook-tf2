@@ -17,8 +17,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
  
-namespace neko::dumper::clientclass {
+#pragma once
 
-void Dump();
+#include <initializer_list>
+#include <string_view>
+#include <queue>
+
+#include "ifaces/base_client.hpp"
+
+namespace sourcesdk {
+
+class Entity;
+class Netvar {
+    using MapType = std::initializer_list<std::string_view>;
+public:
+    Netvar(MapType _map);
+    template <typename Type>
+    inline Type& Get(Entity* entity) {
+        return *reinterpret_cast<Type*>(reinterpret_cast<uintptr_t>(entity) + this->offset);
+    }
+    static void Init(BaseClient*);
+private:
+    MapType map;
+    std::ptrdiff_t offset = 0;
+    static inline std::queue<Netvar*> list;
+};
+
 
 }
