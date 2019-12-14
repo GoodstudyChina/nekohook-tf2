@@ -16,15 +16,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
- 
-#include <sdk/netvar.hpp>
+
+#include <chrono>
+#include <fstream>
+#include <thread>
+
+#include "sdk/entity.hpp"
+
+#include "hooks/clientmode.hpp"
 #include "iface.hpp"
 
-namespace neko::hook::entry {
+namespace neko::entry {
+using namespace std::chrono_literals;
 
 void __attribute__((constructor)) Init() {
-    iface::Init();
-    sourcesdk::Netvar::Init(iface::client);
+    std::thread t([](){
+        try {
+            iface::Init();
+            std::this_thread::sleep_for(3s);
+            sourcesdk::netvar::Init();
+            hook::clientmode::Init();
+        } catch (std::exception& err) {
+            //std::fstream out("/tmp/err", std::ios_base::out | std::ios_base::trunc);
+            //out << "Recieved error: " << err.what() << std::endl;
+        } catch (...) {
+            std::fstream out("/tmp/err", std::ios_base::out | std::ios_base::trunc);
+            out << "Recieved unknown error." << std::endl;
+        }
+    });
+    t.detach();
 }
 
 }

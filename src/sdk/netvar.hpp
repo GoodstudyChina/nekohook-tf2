@@ -16,32 +16,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
- 
+
 #pragma once
 
-#include <initializer_list>
-#include <string_view>
-#include <queue>
+#include <cassert>
+#include <hack/memory.hpp>
 
 #include "ifaces/base_client.hpp"
 
 namespace sourcesdk {
-
+using namespace neko::hack;
 class Entity;
+
+namespace netvar {
+
+template<typename T>
 class Netvar {
-    using MapType = std::initializer_list<std::string_view>;
 public:
-    Netvar(MapType _map);
-    template <typename Type>
-    inline Type& Get(Entity* entity) {
-        return *reinterpret_cast<Type*>(reinterpret_cast<uintptr_t>(entity) + this->offset);
+    inline T& Get(Entity* entity) {
+        assert(this->offset);
+        return *mem::Offset<T>(entity, this->offset);
     }
-    static void Init(BaseClient*);
+    void Set(std::ptrdiff_t d) { this->offset = d; }
 private:
-    MapType map;
     std::ptrdiff_t offset = 0;
-    static inline std::queue<Netvar*> list;
 };
 
+void Init();
+
+static inline Netvar<math::Vector> origin;
+
+}
 
 }

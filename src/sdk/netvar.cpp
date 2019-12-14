@@ -18,29 +18,24 @@
  */
 
 #include <cassert>
-#include <string>
 #include <stdexcept>
+
+#include "../iface.hpp"
 
 #include "netvar.hpp"
 
-namespace sourcesdk {
+namespace sourcesdk::netvar {
 
-Netvar::Netvar(MapType _map) : map(_map) {
-   Netvar::list.push(this);
-}
-
-static std::ptrdiff_t GetOffset(BaseClient* client, std::initializer_list<std::string_view> var_map){
-    assert(var_map.size() < 2);
+static std::ptrdiff_t GetOffset(std::initializer_list<std::string_view> var_map){
+    assert(var_map.size() >= 2);
 
     // Find our first argument
-    RecvTable* table;
-    for (ClientClass* i = client->GetAllClasses(); i != nullptr; i = i->next) {
-        if (i->table->name != *var_map.begin())
-            continue;
-
-        // Set our table
-        table = i->table;
-        break;
+    RecvTable* table = nullptr;
+    for (ClientClass* i = iface::client->GetAllClasses(); i; i = i->next) {
+        if (i->table->name == *var_map.begin()) {
+            table = i->table;
+            break;
+        }
     }
     if (!table)
         throw std::runtime_error("Netvar: not found: " + std::string(*var_map.begin()));
@@ -60,7 +55,7 @@ static std::ptrdiff_t GetOffset(BaseClient* client, std::initializer_list<std::s
         level++;
 
         // We finished, return the offset
-        if (level == var_map.size()) {}
+        if (level == var_map.size())
             return cur_offset;
 
         // Since we arent finished, we setup for another recursion
@@ -73,9 +68,8 @@ static std::ptrdiff_t GetOffset(BaseClient* client, std::initializer_list<std::s
     throw std::runtime_error(err);
 }
 
-void Netvar::Init(BaseClient* client) {
-    for (Netvar* nv = list.front(); !list.empty(); list.pop(), nv = list.front())
-        nv->offset = GetOffset(client, nv->map);
+void Init() {
+    origin.Set(GetOffset({"DT_BaseEntity", "m_vecOrigin"}));
 }
 
 

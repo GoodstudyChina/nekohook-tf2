@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
- 
+
 #include <fstream>
 #include <string_view>
 #include <sdk/client_class.hpp>
@@ -48,21 +48,28 @@ static std::string_view TypeToString(RecvProp::Type type) {
         return "UNKNOWN";
     }
 }
-std::fstream out("/tmp/netvardump", std::ios_base::out | std::ios_base::trunc);
+static std::fstream out("/tmp/netvardump", std::ios_base::out | std::ios_base::trunc);
 static void DumpTable(const RecvTable* table, int recur = 0, int offset = 0) {
     if (!table) return;
+
     for (int i = 0; i < recur; i++)
         out << "    ";
     out << table->name << std::endl;
+
     for (int i = 0; i < table->size; i++) {
         const RecvProp& prop = table->props[i];
         if (!prop.name || isdigit(prop.name[0])) continue;
-        for (int i = 0; i < recur + 1; i++)
+
+        int next_recur = recur + 1;
+        for (int i = 0; i < next_recur; i++)
             out << "    ";
-        out << prop.name << " 0x" << std::hex << offset + prop.offset;
+
+        int new_offset = offset + prop.offset;
+        out << prop.name << " 0x" << std::hex << new_offset;
         out << ' ' << TypeToString(prop.type) << std::endl;
+
         if (prop.table)
-            DumpTable(prop.table, recur + 1, offset + prop.offset);
+            DumpTable(prop.table, next_recur, new_offset);
     }
 }
 

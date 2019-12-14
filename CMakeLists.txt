@@ -16,14 +16,13 @@ endif()
 
 add_subdirectory(external/nekohook)
 add_subdirectory(external/nekohack)
-add_subdirectory(sdk)
 file(GLOB_RECURSE NEKOHOOKTF_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 add_library(nekohook-tf2 SHARED ${NEKOHOOKTF_SOURCES})
-target_include_directories(nekohook-tf2 PRIVATE nekohook nekohack sourcesdk)
-target_link_libraries(nekohook-tf2 PRIVATE nekohook nekohack sourcesdk)
+target_include_directories(nekohook-tf2 PRIVATE nekohook nekohack)
+target_link_libraries(nekohook-tf2 PRIVATE nekohook nekohack)
 
 # Class and netvar dumper
 file(GLOB_RECURSE DUMPERTF_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/dumper/*.cpp")
 add_library(nekohook-dumper SHARED ${DUMPERTF_SOURCES})
-target_include_directories(nekohook-dumper PRIVATE sourcesdk nekohack)
-target_link_libraries(nekohook-dumper PRIVATE nekohack sourcesdk)
+target_include_directories(nekohook-dumper PRIVATE nekohack "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_link_libraries(nekohook-dumper PRIVATE nekohack)

@@ -18,11 +18,13 @@
  */
 
 #include <cstring>
+
+#include <neko/platform.hpp>
 #include <hack/sharedlibrary.hpp>
 
 #include "iface.hpp"
 
-namespace neko::hook::iface {
+namespace neko::iface {
 using namespace neko::hack;
 using CreateIFace_f = void* (*)(const char*, int*);
 
@@ -41,6 +43,7 @@ Type* BFInterface(CreateIFace_f Ci, std::string_view name) {
 
 sourcesdk::BaseClient* client;
 sourcesdk::EntityList* entity_list;
+sourcesdk::Engine* engine;
 void Init(){
     CreateIFace_f CreateIFace;
 
@@ -49,6 +52,16 @@ void Init(){
     CreateIFace = clientso.GetSym<CreateIFace_f>("CreateInterface");
     client = BFInterface<sourcesdk::BaseClient>(CreateIFace, "VClient");
     entity_list = BFInterface<sourcesdk::EntityList>(CreateIFace, "VClientEntityList");
+
+    SharedLibrary engineso("engine");
+    engineso.ForceInit();
+    CreateIFace = engineso.GetSym<CreateIFace_f>("CreateInterface");
+    engine = BFInterface<sourcesdk::Engine>(CreateIFace, "VEngineClient");
+
+    SharedLibrary vstd(Platform::Switch("libvstdlib", "vstdlib"));
+    vstd.ForceInit();
+    CreateIFace = vstd.GetSym<CreateIFace_f>("CreateInterface");
+    cvar = BFInterface<sourcesdk::ICvar>(CreateIFace, "VEngineCvar");
 }
 
 }

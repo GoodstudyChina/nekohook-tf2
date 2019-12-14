@@ -16,15 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
- 
-#include <cstddef>
+
+#pragma once
+
+#include "../vft.hpp"
 
 namespace sourcesdk {
-
-template<typename Func, class This>
-Func GetVirtual(This* _this, int offset) {
-    void** table = *reinterpret_cast<void***>(_this);
-    return reinterpret_cast<Func>(table[offset]);
-}
+ 
+class CommandBase;
+class ICvar {
+public:
+    void Register(CommandBase* command) {
+        using Func = void (*)(CommandBase*);
+        return GetVirtual<Func>(this, 6)(command);
+    }
+    void UnRegister(CommandBase *command) {
+        using Func = void (*)(CommandBase*);
+        return GetVirtual<Func>(this, 7)(command);
+    }
+    CommandBase* Find(const char* name) {
+        using Func = CommandBase* (*)(const char*);
+        return GetVirtual<Func>(this, 12)(name);
+    }
+};
 
 }

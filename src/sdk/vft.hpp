@@ -16,34 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
- 
+
 #pragma once
 
-#include <neko/hook/util/math.hpp>
-#include "netvar.hpp"
+#include <cstddef>
+
 namespace sourcesdk {
-using namespace neko;
 
-class Entity {
-private:
-    static inline Netvar origin{{"DT_BaseEntity", "m_vecOrigin"}};
-public:
-    inline math::Vector GetOrigin() {
-        return origin.Get<math::Vector>(this);
-    }
-};
-
-class EntityList {
-public:
-    Entity* GetEntity(int idx) {
-        using Func = Entity* (*)(int);
-        return GetVirtual<Func>(this, 3)(idx);
-    }
-    int GetSize(){
-        using Func = int (*)();
-        return GetVirtual<Func>(this, 6)();
-    }
-};
-
+template<typename Func, class This>
+Func GetVirtual(This* _this, int offset) {
+    void** table = *reinterpret_cast<void***>(_this);
+    return reinterpret_cast<Func>(table[offset]);
+}
 
 }

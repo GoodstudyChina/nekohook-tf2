@@ -328,7 +328,6 @@ void Init() {
     auto HookClientmode = []() {
         // Client mode
         uintptr_t* tmp;
-#if !defined(_WIN32)
         while (!(
             tmp = **(uintptr_t***)(((*(uintptr_t**)iface::client)[10]) + 1))) {
         }

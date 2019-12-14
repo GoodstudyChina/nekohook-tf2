@@ -19,13 +19,18 @@
 
 #pragma once
 
-#include <sdk/ifaces/base_client.hpp>
-#include <sdk/entity.hpp>
+#include "sdk/ifaces/base_client.hpp"
+#include "sdk/ifaces/engine.hpp"
+#include "sdk/ifaces/cvar.hpp"
+#include "sdk/ifaces/entity.hpp"
 
-namespace neko::hook::iface {
+namespace neko::iface {
+using namespace sourcesdk;
 
-extern sourcesdk::BaseClient* client;
-extern sourcesdk::EntityList* entity_list;
+extern BaseClient* client;
+extern EntityList* entity_list;
+extern Engine* engine;
+extern ICvar* cvar;
 void Init();
 
 }

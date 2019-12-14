@@ -16,3 +16,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#pragma once
+
+#include "vector.hpp"
+
+#include "netvar.hpp"
+
+namespace sourcesdk {
+
+class Entity {
+public:
+    int GetIndex() {
+        using Func = int (*)();
+        return GetVirtual<Func>(this, 79)();
+    }
+    bool GetDormant(){
+        using Func = bool (*)();
+        return GetVirtual<Func>(this, 75)();
+    }
+    inline math::Vector& GetOrigin() {
+        return netvar::origin.Get(this);
+    }
+    ClientClass* GetClientClass() {
+        using Func = ClientClass* (*)();
+        return GetVirtual<Func>(this, 17)();
+    }
+};
+
+}

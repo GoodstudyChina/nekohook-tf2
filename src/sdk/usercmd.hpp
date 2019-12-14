@@ -16,10 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
- 
+
 #pragma once
 
+#include <bitset>
+#include <cstddef>
+
 #include <neko/hook/util/math.hpp>
+
+namespace sourcesdk {
+using namespace neko;
 
 enum class Buttons {
     kAttack,
@@ -55,12 +61,12 @@ public:
     virtual ~UserCmd(){};
     int command_number;
     int tick_count;
-    Vector viewangles;
+    math::Vector viewangles;
     float forwardmove;
     float sidemove;
     float upmove;
     std::bitset<sizeof(int) * 8> buttons;
-    byte impulse;
+    std::byte impulse;
     int weaponselect;
     int weaponsubtype;
     int random_seed;
@@ -68,3 +74,5 @@ public:
     short mousedy;
     bool hasbeenpredicted;
 };
+
+}
